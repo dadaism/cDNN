@@ -29,9 +29,4 @@ struct cudnnFilterStruct {
 
 };
 
-struct cudnnFilterStruct {
-	/* data */
-
-};
-
 #endif

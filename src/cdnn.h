@@ -191,29 +191,29 @@ typedef enum
 } cdnnAddMode_t;
 
 /* Tensor Bias addition : srcDest = alpha * bias + beta * srcDestDesc  */
-cdnnStatus_t CDNNWINAPI cdnnAddTensor(   cdnnHandle_t                    handle,
-                                            cdnnAddMode_t                   mode,
-                                            const void                      *alpha,
-                                            const cdnnTensorDescriptor_t    biasDesc,
-                                            const void                      *biasData,
-                                            const void                      *beta,
-                                            cdnnTensorDescriptor_t          srcDestDesc,
-                                            void                            *srcDestData
-                                        );
+cdnnStatus_t CDNNWINAPI cdnnAddTensor(  cdnnHandle_t                    handle,
+                                        cdnnAddMode_t                   mode,
+                                        const void                      *alpha,
+                                        const cdnnTensorDescriptor_t    biasDesc,
+                                        const void                      *biasData,
+                                        const void                      *beta,
+                                        cdnnTensorDescriptor_t          srcDestDesc,
+                                        void                            *srcDestData
+                                     );
 
 /* Set all data points of a tensor to a given value : srcDest = value */
-cdnnStatus_t CDNNWINAPI cdnnSetTensor(   cdnnHandle_t                   handle,
-                                            const cdnnTensorDescriptor_t   srcDestDesc,
-                                            void                           *srcDestData,
-                                            const void                     *value
-                                        );
+cdnnStatus_t CDNNWINAPI cdnnSetTensor(  cdnnHandle_t                   handle,
+                                        const cdnnTensorDescriptor_t   srcDestDesc,
+                                        void                           *srcDestData,
+                                        const void                     *value
+                                     ) ;
 
 /* Set all data points of a tensor to a given value : srcDest = alpha * srcDest */
-cdnnStatus_t CDNNWINAPI cdnnScaleTensor(   cdnnHandle_t                    handle,
-                                            const cdnnTensorDescriptor_t    srcDestDesc,
-                                            void                            *srcDestData,
-                                            const void                      *alpha
-);
+cdnnStatus_t CDNNWINAPI cdnnScaleTensor(  cdnnHandle_t                    handle,
+                                          const cdnnTensorDescriptor_t    srcDestDesc,
+                                          void                            *srcDestData,
+                                          const void                      *alpha
+                                       ) ;
 
 /*
 *  convolution mode
@@ -245,20 +245,33 @@ cdnnStatus_t CDNNWINAPI cdnnGetFilter4dDescriptor(  const cdnnFilterDescriptor_t
                                                     );
 //
 cdnnStatus_t CDNNWINAPI cdnnSetFilterNdDescriptor(  cdnnFilterDescriptor_t filterDesc,
-                                                      cdnnDataType_t dataType, // image data type
-                                                       int nbDims,
-const int filterDimA[]
-);
-//
+                                                    cdnnDataType_t dataType, // image data type
+                                                    int nbDims,
+                                                    const int filterDimA[]
+)
+{
+
+
+
+}
+
 cdnnStatus_t CDNNWINAPI cdnnGetFilterNdDescriptor(  const cdnnFilterDescriptor_t filterDesc,
 int nbDimsRequested,
 cdnnDataType_t *dataType, // image data type
 int *nbDims,
 int filterDimA[]
-);
-//
-cdnnStatus_t CDNNWINAPI cdnnDestroyFilterDescriptor( cdnnFilterDescriptor_t filterDesc );
-//
+)
+{
+
+
+}
+
+cdnnStatus_t CDNNWINAPI cdnnDestroyFilterDescriptor( cdnnFilterDescriptor_t filterDesc )
+{
+
+
+}
+
 /* Create an instance of convolution descriptor */
  cdnnStatus_t CDNNWINAPI cdnnCreateConvolutionDescriptor( cdnnConvolutionDescriptor_t *convDesc );
 //
@@ -284,7 +297,7 @@ cdnnConvolutionMode_t* mode
 );
 //
 /* Helper function to return the dimensions of the output tensor given a convolution descriptor */
-cdnnGetConvolution2dForwardOutputDim( const cdnnConvolutionDescriptor_t convDesc,
+cudnnStatus_t CUDNNWINAPI cdnnGetConvolution2dForwardOutputDim( const cdnnConvolutionDescriptor_t convDesc,
 const cdnnTensorDescriptor_t     inputTensorDesc,
 const cdnnFilterDescriptor_t     filterDesc,
 int *n,
