@@ -243,7 +243,7 @@ cdnnStatus_t CDNNWINAPI cdnnGetFilter4dDescriptor(  const cdnnFilterDescriptor_t
                                                       int *h,        // height of each input filter
                                                       int *w         // width of  each input fitler
                                                     );
-//
+
 cdnnStatus_t CDNNWINAPI cdnnSetFilterNdDescriptor(  cdnnFilterDescriptor_t filterDesc,
                                                     cdnnDataType_t dataType, // image data type
                                                     int nbDims,
@@ -256,11 +256,11 @@ cdnnStatus_t CDNNWINAPI cdnnSetFilterNdDescriptor(  cdnnFilterDescriptor_t filte
 }
 
 cdnnStatus_t CDNNWINAPI cdnnGetFilterNdDescriptor(  const cdnnFilterDescriptor_t filterDesc,
-int nbDimsRequested,
-cdnnDataType_t *dataType, // image data type
-int *nbDims,
-int filterDimA[]
-)
+                                                    int nbDimsRequested,
+                                                    cdnnDataType_t *dataType, // image data type
+                                                    int *nbDims,
+                                                    int filterDimA[]
+                                                )
 {
 
 
@@ -273,172 +273,181 @@ cdnnStatus_t CDNNWINAPI cdnnDestroyFilterDescriptor( cdnnFilterDescriptor_t filt
 }
 
 /* Create an instance of convolution descriptor */
- cdnnStatus_t CDNNWINAPI cdnnCreateConvolutionDescriptor( cdnnConvolutionDescriptor_t *convDesc );
-//
+ cdnnStatus_t CDNNWINAPI cdnnCreateConvolutionDescriptor( cdnnConvolutionDescriptor_t *convDesc )
+ {
+
+
+
+ }
+
 cdnnStatus_t CDNNWINAPI cdnnSetConvolution2dDescriptor(  cdnnConvolutionDescriptor_t convDesc,
-int pad_h,    // zero-padding height
-int pad_w,    // zero-padding width
-int u,        // vertical filter stride
-int v,        // horizontal filter stride
-int upscalex, // upscale the input in x-direction
-int upscaley, // upscale the input in y-direction
-cdnnConvolutionMode_t mode
-);
-//
-//
+                                                         int pad_h,    // zero-padding height
+                                                         int pad_w,    // zero-padding width
+                                                         int u,        // vertical filter stride
+                                                         int v,        // horizontal filter stride
+                                                         int upscalex, // upscale the input in x-direction
+                                                         int upscaley, // upscale the input in y-direction
+                                                         cdnnConvolutionMode_t mode
+                                                      );
+
+
 cdnnStatus_t CDNNWINAPI cdnnGetConvolution2dDescriptor(   const cdnnConvolutionDescriptor_t convDesc,
-int* pad_h,    // zero-padding height
-int* pad_w,    // zero-padding width
-int* u,        // vertical filter stride
-int* v,        // horizontal filter stride
-int* upscalex, // upscale the input in x-direction
-int* upscaley, // upscale the input in y-direction
-cdnnConvolutionMode_t* mode
-);
-//
+                                                          int* pad_h,    // zero-padding height
+                                                          int* pad_w,    // zero-padding width
+                                                          int* u,        // vertical filter stride
+                                                          int* v,        // horizontal filter stride
+                                                          int* upscalex, // upscale the input in x-direction
+                                                          int* upscaley, // upscale the input in y-direction
+                                                          cdnnConvolutionMode_t* mode
+                                                      );
+
 /* Helper function to return the dimensions of the output tensor given a convolution descriptor */
 cudnnStatus_t CUDNNWINAPI cdnnGetConvolution2dForwardOutputDim( const cdnnConvolutionDescriptor_t convDesc,
-const cdnnTensorDescriptor_t     inputTensorDesc,
-const cdnnFilterDescriptor_t     filterDesc,
-int *n,
-int *c,
-int *h,
-int *w
-);
-//                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
-//
+                                                                const cdnnTensorDescriptor_t     inputTensorDesc,
+                                                                const cdnnFilterDescriptor_t     filterDesc,
+                                                                int *n,
+                                                                int *c,
+                                                                int *h,
+                                                                int *w
+                                                              );
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+
 cdnnStatus_t CDNNWINAPI cdnnSetConvolutionNdDescriptor( cdnnConvolutionDescriptor_t convDesc,
-int arrayLength,             /* nbDims-2 size */  
-const int padA[],                                          
-const int filterStrideA[],         
-const int upscaleA[],              
-cdnnConvolutionMode_t mode
-);
+                                                        int arrayLength,             /* nbDims-2 size */  
+                                                        const int padA[],                                          
+                                                        const int filterStrideA[],         
+                                                        const int upscaleA[],              
+                                                        cdnnConvolutionMode_t mode
+                                                      );
 
 cdnnStatus_t CDNNWINAPI cdnnGetConvolutionNdDescriptor( const cdnnConvolutionDescriptor_t convDesc,
-int arrayLengthRequested,
-int *arrayLength,
-int padA[],                                        
-int strideA[],
-int upscaleA[],
-cdnnConvolutionMode_t *mode
-);
-//
-//
+                                                        int arrayLengthRequested,
+                                                        int *arrayLength,
+                                                        int padA[],                                        
+                                                        int strideA[],
+                                                        int upscaleA[],
+                                                        cdnnConvolutionMode_t *mode
+                                                      );
+
+
 /* Helper function to return the dimensions of the output tensor given a convolution descriptor */
 cdnnStatus_t CDNNWINAPI cdnnGetConvolutionNdForwardOutputDim( const cdnnConvolutionDescriptor_t convDesc,
-const cdnnTensorDescriptor_t inputTensorDesc,
-const cdnnFilterDescriptor_t filterDesc,
-int nbDims,
-int tensorOuputDimA[]
-);
-//
+                                                              const cdnnTensorDescriptor_t inputTensorDesc,
+                                                              const cdnnFilterDescriptor_t filterDesc,
+                                                              int nbDims,
+                                                              int tensorOuputDimA[]
+                                                            );
+
 /* Destroy an instance of convolution descriptor */
-cdnnStatus_t CDNNWINAPI cdnnDestroyConvolutionDescriptor( cdnnConvolutionDescriptor_t convDesc );
-//
-//
+cdnnStatus_t CDNNWINAPI cdnnDestroyConvolutionDescriptor( cdnnConvolutionDescriptor_t convDesc )
+{
+
+
+}
+
+
 /* helper function to provide the convolution algo that fit best the requirement */
 typedef enum
 {
-CDNN_CONVOLUTION_FWD_NO_WORKSPACE        = 0,
-CDNN_CONVOLUTION_FWD_PREFER_FASTEST      = 1,
-CDNN_CONVOLUTION_FWD_SPECIFY_WORKSPACE_LIMIT = 2,
+    CDNN_CONVOLUTION_FWD_NO_WORKSPACE        = 0,
+    CDNN_CONVOLUTION_FWD_PREFER_FASTEST      = 1,
+    CDNN_CONVOLUTION_FWD_SPECIFY_WORKSPACE_LIMIT = 2,
 } cdnnConvolutionFwdPreference_t;  
-//                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
 typedef enum
 {
-CDNN_CONVOLUTION_FWD_ALGO_IMPLICIT_GEMM         = 0,
-CDNN_CONVOLUTION_FWD_ALGO_IMPLICIT_PRECOMP_GEMM = 1,
-CDNN_CONVOLUTION_FWD_ALGO_GEMM                  = 2,
-CDNN_CONVOLUTION_FWD_ALGO_DIRECT                = 3    
+    CDNN_CONVOLUTION_FWD_ALGO_IMPLICIT_GEMM         = 0,
+    CDNN_CONVOLUTION_FWD_ALGO_IMPLICIT_PRECOMP_GEMM = 1,
+    CDNN_CONVOLUTION_FWD_ALGO_GEMM                  = 2,
+    CDNN_CONVOLUTION_FWD_ALGO_DIRECT                = 3    
 } cdnnConvolutionFwdAlgo_t;
-//
-//                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 cdnnStatus_t CDNNWINAPI cdnnGetConvolutionForwardAlgorithm( cdnnHandle_t                      handle,
-const cdnnTensorDescriptor_t      srcDesc,
-const cdnnFilterDescriptor_t      filterDesc,
-const cdnnConvolutionDescriptor_t convDesc, 
-const cdnnTensorDescriptor_t      destDesc,
-cdnnConvolutionFwdPreference_t    preference, 
-size_t                             memoryLimitInbytes,
-cdnnConvolutionFwdAlgo_t         *algo                                                  
-);        
-//                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                            const cdnnTensorDescriptor_t      srcDesc,
+                                                            const cdnnFilterDescriptor_t      filterDesc,
+                                                            const cdnnConvolutionDescriptor_t convDesc, 
+                                                            const cdnnTensorDescriptor_t      destDesc,
+                                                            cdnnConvolutionFwdPreference_t    preference, 
+                                                            size_t                             memoryLimitInbytes,
+                                                            cdnnConvolutionFwdAlgo_t         *algo                                                  
+                                                          );        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 /*
 *  convolution algorithm (which requires potentially some workspace)
 */
-//
+
 /* Helper function to return the minimum size of the workspace to be passed to the convolution given an algo*/ 
 cdnnStatus_t CDNNWINAPI cdnnGetConvolutionForwardWorkspaceSize( cdnnHandle_t                      handle, 
-const cdnnTensorDescriptor_t      srcDesc,
-const cdnnFilterDescriptor_t      filterDesc,
-const cdnnConvolutionDescriptor_t convDesc,  
-const cdnnTensorDescriptor_t      destDesc,
-cdnnConvolutionFwdAlgo_t          algo,
-size_t                            *sizeInBytes
-);        
-//
-//
+                                                                const cdnnTensorDescriptor_t      srcDesc,
+                                                                const cdnnFilterDescriptor_t      filterDesc,
+                                                                const cdnnConvolutionDescriptor_t convDesc,  
+                                                                const cdnnTensorDescriptor_t      destDesc,
+                                                                cdnnConvolutionFwdAlgo_t          algo,
+                                                                size_t                            *sizeInBytes
+                                                              );        
+
+
 /* Convolution functions: All of the form "output = alpha * Op(inputs) + beta * output" */
-//
+
 /* Function to perform the forward multiconvolution */
-cdnnStatus_t CDNNWINAPI cdnnConvolutionForward(        cdnnHandle_t                 handle,
-const void                         *alpha,
-const cdnnTensorDescriptor_t       srcDesc,
-const void                         *srcData,
-const cdnnFilterDescriptor_t       filterDesc,
-const void                         *filterData,
-const cdnnConvolutionDescriptor_t  convDesc,
-cdnnConvolutionFwdAlgo_t           algo,
-void                               *workSpace,
-size_t                              workSpaceSizeInBytes,            
-const void                         *beta,
-const cdnnTensorDescriptor_t       destDesc,
-void                               *destData
-);
+cdnnStatus_t CDNNWINAPI cdnnConvolutionForward( cdnnHandle_t                 handle,
+                                                const void                         *alpha,
+                                                const cdnnTensorDescriptor_t       srcDesc,
+                                                const void                         *srcData,
+                                                const cdnnFilterDescriptor_t       filterDesc,
+                                                const void                         *filterData,
+                                                const cdnnConvolutionDescriptor_t  convDesc,
+                                                cdnnConvolutionFwdAlgo_t           algo,
+                                                void                               *workSpace,
+                                                size_t                              workSpaceSizeInBytes,            
+                                                const void                         *beta,
+                                                const cdnnTensorDescriptor_t       destDesc,
+                                                void                               *destData
+                                              );
 
 /* Functions to perform the backward multiconvolution */
-cdnnStatus_t CDNNWINAPI cdnnConvolutionBackwardBias(   cdnnHandle_t                   handle,
-const void                     *alpha,
-const cdnnTensorDescriptor_t   srcDesc,
-const void                      *srcData,
-const void                      *beta,
-const cdnnTensorDescriptor_t   destDesc,
-void                           *destData
-);
+cdnnStatus_t CDNNWINAPI cdnnConvolutionBackwardBias( cdnnHandle_t                   handle,
+                                                     const void                     *alpha,
+                                                     const cdnnTensorDescriptor_t   srcDesc,
+                                                     const void                      *srcData,
+                                                     const void                      *beta,
+                                                     const cdnnTensorDescriptor_t   destDesc,
+                                                     void                           *destData
+                                                   );
 
 cdnnStatus_t CDNNWINAPI cdnnConvolutionBackwardFilter( cdnnHandle_t                       handle,
-const void                         *alpha,
-const cdnnTensorDescriptor_t       srcDesc,
-const void                         *srcData,
-const cdnnTensorDescriptor_t       diffDesc,
-const void                         *diffData,
-const cdnnConvolutionDescriptor_t  convDesc,
-const void                         *beta,
-cdnnFilterDescriptor_t       gradDesc,
-void                               *gradData
-);
+                                                       const void                         *alpha,
+                                                       const cdnnTensorDescriptor_t       srcDesc,
+                                                       const void                         *srcData,
+                                                       const cdnnTensorDescriptor_t       diffDesc,
+                                                       const void                         *diffData,
+                                                       const cdnnConvolutionDescriptor_t  convDesc,
+                                                       const void                         *beta,
+                                                       cdnnFilterDescriptor_t       gradDesc,
+                                                       void                               *gradData
+                                                      );
 
 cdnnStatus_t CDNNWINAPI cdnnConvolutionBackwardData(  cdnnHandle_t                       handle,
-                                                         const void                         *alpha,
-                                                         const cdnnFilterDescriptor_t       filterDesc,
-                                                         const void                         *filterData,
-                                                         const cdnnTensorDescriptor_t       diffDesc,
-                                                         const void                         *diffData,
-                                                         const cdnnConvolutionDescriptor_t  convDesc,
-                                                         const void                         *beta,
-                                                         const cdnnTensorDescriptor_t       gradDesc,
-                                                         void                               *gradData
-                                                       );
+                                                      const void                         *alpha,
+                                                      const cdnnFilterDescriptor_t       filterDesc,
+                                                      const void                         *filterData,
+                                                      const cdnnTensorDescriptor_t       diffDesc,
+                                                      const void                         *diffData,
+                                                      const cdnnConvolutionDescriptor_t  convDesc,
+                                                      const void                         *beta,
+                                                      const cdnnTensorDescriptor_t       gradDesc,
+                                                      void                               *gradData
+                                                    );
                                                        
 cdnnStatus_t CDNNWINAPI cdnnIm2Col(  cdnnHandle_t                       handle,
-                                        const void                         *alpha,
-                                        const cdnnTensorDescriptor_t       srcDesc,
-                                        const void                         *srcData,
-                                        const cdnnFilterDescriptor_t       filterDesc,                                        
-                                        const cdnnConvolutionDescriptor_t  convDesc,
-                                        void                               *colBuffer
-                                     );
+                                     const void                         *alpha,
+                                     const cdnnTensorDescriptor_t       srcDesc,
+                                     const void                         *srcData,
+                                     const cdnnFilterDescriptor_t       filterDesc,                                        
+                                     const cdnnConvolutionDescriptor_t  convDesc,
+                                     void                               *colBuffer
+                                  );
 
 
 /*
@@ -460,29 +469,29 @@ typedef enum
 
 /* Function to perform forward softmax */
 cdnnStatus_t CDNNWINAPI cdnnSoftmaxForward(  cdnnHandle_t                    handle,
-                                                cdnnSoftmaxAlgorithm_t          algorithm,
-                                                cdnnSoftmaxMode_t               mode,
-                                                const void                      *alpha,
-                                                const cdnnTensorDescriptor_t    srcDesc,
-                                                const void                      *srcData,
-                                                const void                      *beta,
-                                                const cdnnTensorDescriptor_t    destDesc,
-                                                void                            *destData
-                                             );
+                                             cdnnSoftmaxAlgorithm_t          algorithm,
+                                             cdnnSoftmaxMode_t               mode,
+                                             const void                      *alpha,
+                                             const cdnnTensorDescriptor_t    srcDesc,
+                                             const void                      *srcData,
+                                             const void                      *beta,
+                                             const cdnnTensorDescriptor_t    destDesc,
+                                             void                            *destData
+                                          );
 
 /* Function to perform backward softmax */
 cdnnStatus_t CDNNWINAPI cdnnSoftmaxBackward( cdnnHandle_t                    handle,
-                                                cdnnSoftmaxAlgorithm_t          algorithm,
-                                                cdnnSoftmaxMode_t               mode,
-                                                const void                      *alpha,
-                                                const cdnnTensorDescriptor_t    srcDesc,
-                                                const void                      *srcData,
-                                                const cdnnTensorDescriptor_t    srcDiffDesc,
-                                                const void                      *srcDiffData,
-                                                const void                      *beta,
-                                                const cdnnTensorDescriptor_t    destDiffDesc,
-                                                void                            *destDiffData
-                                              );
+                                             cdnnSoftmaxAlgorithm_t          algorithm,
+                                             cdnnSoftmaxMode_t               mode,
+                                             const void                      *alpha,
+                                             const cdnnTensorDescriptor_t    srcDesc,
+                                             const void                      *srcData,
+                                             const cdnnTensorDescriptor_t    srcDiffDesc,
+                                             const void                      *srcDiffData,
+                                             const void                      *beta,
+                                             const cdnnTensorDescriptor_t    destDiffDesc,
+                                             void                            *destDiffData
+                                           );
 
 /*
  *  pooling mode
@@ -498,53 +507,53 @@ typedef enum
 cdnnStatus_t CDNNWINAPI cdnnCreatePoolingDescriptor( cdnnPoolingDescriptor_t *poolingDesc);
 
 cdnnStatus_t CDNNWINAPI cdnnSetPooling2dDescriptor(  cdnnPoolingDescriptor_t poolingDesc,
-                                                        cdnnPoolingMode_t mode,
-                                                        int windowHeight,
-                                                        int windowWidth,
-                                                        int verticalPadding,
-                                                        int horizontalPadding,
-                                                        int verticalStride,
-                                                        int horizontalStride
+                                                     cdnnPoolingMode_t mode,
+                                                     int windowHeight,
+                                                     int windowWidth,
+                                                     int verticalPadding,
+                                                     int horizontalPadding,
+                                                     int verticalStride,
+                                                     int horizontalStride
                                                    );
 
 cdnnStatus_t CDNNWINAPI cdnnGetPooling2dDescriptor(  const cdnnPoolingDescriptor_t poolingDesc,
-                                                        cdnnPoolingMode_t *mode,
-                                                        int *windowHeight,
-                                                        int *windowWidth,
-                                                        int *verticalPadding,
-                                                        int *horizontalPadding,
-                                                        int *verticalStride,
-                                                        int *horizontalStride
+                                                     cdnnPoolingMode_t *mode,
+                                                     int *windowHeight,
+                                                     int *windowWidth,
+                                                     int *verticalPadding,
+                                                     int *horizontalPadding,
+                                                     int *verticalStride,
+                                                     int *horizontalStride
                                                    );
 
 cdnnStatus_t CDNNWINAPI cdnnSetPoolingNdDescriptor(  cdnnPoolingDescriptor_t poolingDesc,
-                                                        const cdnnPoolingMode_t mode,
-                                                        int nbDims,
-                                                        const int windowDimA[],
-                                                        const int paddingA[],
-                                                        const int strideA[]
+                                                     const cdnnPoolingMode_t mode,
+                                                     int nbDims,
+                                                     const int windowDimA[],
+                                                     const int paddingA[],
+                                                     const int strideA[]
                                                    );
 
 cdnnStatus_t CDNNWINAPI cdnnGetPoolingNdDescriptor(  const cdnnPoolingDescriptor_t poolingDesc,
-                                                        const int nbDimsRequested,
-                                                        cdnnPoolingMode_t *mode,
-                                                        int *nbDims,
-                                                        int windowDimA[],
-                                                        int paddingA[],
-                                                        int strideA[]
-                                                     );
+                                                     const int nbDimsRequested,
+                                                     cdnnPoolingMode_t *mode,
+                                                     int *nbDims,
+                                                     int windowDimA[],
+                                                     int paddingA[],
+                                                     int strideA[]
+                                                  );
 
 cdnnStatus_t CDNNWINAPI cdnnGetPoolingNdForwardOutputDim( const cdnnPoolingDescriptor_t poolingDesc,
-                                                             const cdnnTensorDescriptor_t inputTensorDesc,
-                                                             int nbDims,
-                                                             int outputTensorDimA[]);
+                                                          const cdnnTensorDescriptor_t inputTensorDesc,
+                                                          int nbDims,
+                                                          int outputTensorDimA[]);
 
 cdnnStatus_t CDNNWINAPI cdnnGetPooling2dForwardOutputDim( const cdnnPoolingDescriptor_t poolingDesc,
-                                                             const cdnnTensorDescriptor_t inputTensorDesc,
-                                                             int *outN,
-                                                             int *outC,
-                                                             int *outH,
-                                                             int *outW);
+                                                          const cdnnTensorDescriptor_t inputTensorDesc,
+                                                          int *outN,
+                                                          int *outC,
+                                                          int *outH,
+                                                          int *outW);
 
 
 /* Destroy an instance of pooling descriptor */
@@ -554,29 +563,29 @@ cdnnStatus_t CDNNWINAPI cdnnDestroyPoolingDescriptor( cdnnPoolingDescriptor_t po
 
 /* Function to perform forward pooling */
 cdnnStatus_t CDNNWINAPI cdnnPoolingForward(  cdnnHandle_t handle,
-                                                const cdnnPoolingDescriptor_t   poolingDesc,
-                                                const void                      *alpha,
-                                                const cdnnTensorDescriptor_t    srcDesc,
-                                                const void                      *srcData,
-                                                const void                      *beta,
-                                                const cdnnTensorDescriptor_t    destDesc,
-                                                void                            *destData
-                                             );
+                                             const cdnnPoolingDescriptor_t   poolingDesc,
+                                             const void                      *alpha,
+                                             const cdnnTensorDescriptor_t    srcDesc,
+                                             const void                      *srcData,
+                                             const void                      *beta,
+                                             const cdnnTensorDescriptor_t    destDesc,
+                                             void                            *destData
+                                          );
 
 /* Function to perform backward pooling */
 cdnnStatus_t CDNNWINAPI cdnnPoolingBackward( cdnnHandle_t                   handle,
-                                                const cdnnPoolingDescriptor_t  poolingDesc,
-                                                const void                      *alpha,
-                                                const cdnnTensorDescriptor_t   srcDesc,
-                                                const void                     *srcData,
-                                                const cdnnTensorDescriptor_t   srcDiffDesc,
-                                                const void                     *srcDiffData,
-                                                const cdnnTensorDescriptor_t   destDesc,
-                                                const void                     *destData,
-                                                const void                     *beta,
-                                                const cdnnTensorDescriptor_t   destDiffDesc,
-                                                void                           *destDiffData
-                                              );
+                                             const cdnnPoolingDescriptor_t  poolingDesc,
+                                             const void                      *alpha,
+                                             const cdnnTensorDescriptor_t   srcDesc,
+                                             const void                     *srcData,
+                                             const cdnnTensorDescriptor_t   srcDiffDesc,
+                                             const void                     *srcDiffData,
+                                             const cdnnTensorDescriptor_t   destDesc,
+                                             const void                     *destData,
+                                             const void                     *beta,
+                                             const cdnnTensorDescriptor_t   destDiffDesc,
+                                             void                           *destDiffData
+                                           );
 
 /*
  * activation mode
@@ -592,29 +601,29 @@ typedef enum
 
 /* Function to perform forward activation  */
 cdnnStatus_t CDNNWINAPI cdnnActivationForward( cdnnHandle_t                    handle,
-                                                  cdnnActivationMode_t            mode,
-                                                  const void                      *alpha,
-                                                  const cdnnTensorDescriptor_t    srcDesc,
-                                                  const void                      *srcData,
-                                                  const void                      *beta,
-                                                  const cdnnTensorDescriptor_t    destDesc,
-                                                  void                            *destData
-                                                );
+                                               cdnnActivationMode_t            mode,
+                                               const void                      *alpha,
+                                               const cdnnTensorDescriptor_t    srcDesc,
+                                               const void                      *srcData,
+                                               const void                      *beta,
+                                               const cdnnTensorDescriptor_t    destDesc,
+                                               void                            *destData
+                                             );
 
 /* Function to perform backward activation  */
 cdnnStatus_t CDNNWINAPI cdnnActivationBackward( cdnnHandle_t                    handle,
-                                                   cdnnActivationMode_t            mode,
-                                                   const void                      *alpha,
-                                                   const cdnnTensorDescriptor_t    srcDesc,
-                                                   const void                      *srcData,
-                                                   const cdnnTensorDescriptor_t    srcDiffDesc,
-                                                   const void                      *srcDiffData,
-                                                   const cdnnTensorDescriptor_t    destDesc,
-                                                   const void                      *destData,
-                                                   const void                      *beta,
-                                                   const cdnnTensorDescriptor_t    destDiffDesc,
-                                                   void                            *destDiffData
-                                                 );
+                                                cdnnActivationMode_t            mode,
+                                                const void                      *alpha,
+                                                const cdnnTensorDescriptor_t    srcDesc,
+                                                const void                      *srcData,
+                                                const cdnnTensorDescriptor_t    srcDiffDesc,
+                                                const void                      *srcDiffData,
+                                                const cdnnTensorDescriptor_t    destDesc,
+                                                const void                      *destData,
+                                                const void                      *beta,
+                                                const cdnnTensorDescriptor_t    destDiffDesc,
+                                                void                            *destDiffData
+                                              );
 #if defined (__cplusplus)
 }
 #endif
