@@ -18,8 +18,8 @@
  *     CDNN_SOFTMAX_MODE_INSTANCE = 0    compute the softmax over all C, H, W for each N 
  *     CDNN_SOFTMAX_MODE_CHANNEL = 1     compute the softmax over all C for each H, W, N 
  *
- *
- *
+ * f(x) = exp(x) / sum( exp(Xi) ) 
+ * f'(x) = 
  */
 
 /** 
@@ -67,18 +67,18 @@ cdnnStatus_t CDNNWINAPI cdnnSoftmaxForward(  cdnnHandle_t                    han
  * @param *destDiffData 
  * @return cdnnStatus_t
  */
-cdnnStatus_t CDNNWINAPI cdnnSoftmaxBackward( cdnnHandle_t                    handle,
-                                                cdnnSoftmaxAlgorithm_t          algorithm,
-                                                cdnnSoftmaxMode_t               mode,
-                                                const void                      *alpha,
-                                                const cdnnTensorDescriptor_t    srcDesc,
-                                                const void                      *srcData,
-                                                const cdnnTensorDescriptor_t    srcDiffDesc,
-                                                const void                      *srcDiffData,
-                                                const void                      *beta,
-                                                const cdnnTensorDescriptor_t    destDiffDesc,
-                                                void                            *destDiffData
-                                              )
+cdnnStatus_t CDNNWINAPI cdnnSoftmaxBackward(  cdnnHandle_t                    handle,
+                                              cdnnSoftmaxAlgorithm_t          algorithm,
+                                              cdnnSoftmaxMode_t               mode,
+                                              const void                      *alpha,
+                                              const cdnnTensorDescriptor_t    srcDesc,
+                                              const void                      *srcData,
+                                              const cdnnTensorDescriptor_t    srcDiffDesc,
+                                              const void                      *srcDiffData,
+                                              const void                      *beta,
+                                              const cdnnTensorDescriptor_t    destDiffDesc,
+                                              void                            *destDiffData
+                                            )
 {
 
 
@@ -86,7 +86,26 @@ cdnnStatus_t CDNNWINAPI cdnnSoftmaxBackward( cdnnHandle_t                    han
 
 
 
-/* Activation functions: All of the form "output = alpha * Op(inputs) + beta * output" */
+/**
+ * Activation functions: All of the form "output = alpha * Op(inputs) + beta * output" 
+ * cdnnActivationMode_t:
+ *    CUDNN_ACTIVATION_SIGMOID = 0
+ *    CUDNN_ACTIVATION_RELU    = 1
+ *    CUDNN_ACTIVATION_TANH    = 2
+ *
+ * Sigmoid:
+ *    f(x) =
+ *    f'(x) = 
+ *
+ * ReLU:
+ *    f(x) =
+ *    f'(x) = 
+ *
+ * Tanh: 
+ *    f(x) =
+ *    f'(x) = 
+ */
+
 
 /** 
  * Function to perform forward activation.
@@ -102,14 +121,14 @@ cdnnStatus_t CDNNWINAPI cdnnSoftmaxBackward( cdnnHandle_t                    han
  * @return cdnnStatus_t
  */ 
 cdnnStatus_t CDNNWINAPI cdnnActivationForward( cdnnHandle_t                    handle,
-                                                  cdnnActivationMode_t            mode,
-                                                  const void                      *alpha,
-                                                  const cdnnTensorDescriptor_t    srcDesc,
-                                                  const void                      *srcData,
-                                                  const void                      *beta,
-                                                  const cdnnTensorDescriptor_t    destDesc,
-                                                  void                            *destData
-                                                )
+                                               cdnnActivationMode_t            mode,
+                                               const void                      *alpha,
+                                               const cdnnTensorDescriptor_t    srcDesc,
+                                               const void                      *srcData,
+                                               const void                      *beta,
+                                               const cdnnTensorDescriptor_t    destDesc,
+                                               void                            *destData
+                                              )
 {
 
 
