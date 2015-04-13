@@ -12,20 +12,29 @@
 #endif
 #endif
 
+/**
+ * Return error string from error code. 
+ */
 const char * CDNNWINAPI cdnnGetErrorString(cdnnStatus_t status)
 {
 
- 
+    return "Yep";
 }
 
+/**
+ * Create an instance of cdnnHandle_t. 
+ */
 cdnnStatus_t CDNNWINAPI cdnnCreate(cdnnHandle_t *handle)
 {
 
- 
+     return CDNN_STATUS_SUCCESS;
 }
 
+/**
+ * Destroy an instance of cdnnHandle_t. 
+ */
 cdnnStatus_t CDNNWINAPI cdnnDestroy(cdnnHandle_t handle)
 {
 
- 
+     return CDNN_STATUS_SUCCESS;
 }
