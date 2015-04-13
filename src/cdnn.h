@@ -248,37 +248,20 @@ cdnnStatus_t CDNNWINAPI cdnnSetFilterNdDescriptor(  cdnnFilterDescriptor_t filte
                                                     cdnnDataType_t dataType, // image data type
                                                     int nbDims,
                                                     const int filterDimA[]
-)
-{
-
-
-
-}
+                                                 );
 
 cdnnStatus_t CDNNWINAPI cdnnGetFilterNdDescriptor(  const cdnnFilterDescriptor_t filterDesc,
                                                     int nbDimsRequested,
                                                     cdnnDataType_t *dataType, // image data type
                                                     int *nbDims,
                                                     int filterDimA[]
-                                                )
-{
+                                                );
 
-
-}
-
-cdnnStatus_t CDNNWINAPI cdnnDestroyFilterDescriptor( cdnnFilterDescriptor_t filterDesc )
-{
-
-
-}
+cdnnStatus_t CDNNWINAPI cdnnDestroyFilterDescriptor( cdnnFilterDescriptor_t filterDesc );
 
 /* Create an instance of convolution descriptor */
- cdnnStatus_t CDNNWINAPI cdnnCreateConvolutionDescriptor( cdnnConvolutionDescriptor_t *convDesc )
- {
+cdnnStatus_t CDNNWINAPI cdnnCreateConvolutionDescriptor( cdnnConvolutionDescriptor_t *convDesc );
 
-
-
- }
 
 cdnnStatus_t CDNNWINAPI cdnnSetConvolution2dDescriptor(  cdnnConvolutionDescriptor_t convDesc,
                                                          int pad_h,    // zero-padding height
@@ -302,8 +285,8 @@ cdnnStatus_t CDNNWINAPI cdnnGetConvolution2dDescriptor(   const cdnnConvolutionD
                                                       );
 
 /* Helper function to return the dimensions of the output tensor given a convolution descriptor */
-cudnnStatus_t CUDNNWINAPI cdnnGetConvolution2dForwardOutputDim( const cdnnConvolutionDescriptor_t convDesc,
-                                                                const cdnnTensorDescriptor_t     inputTensorDesc,
+cdnnStatus_t CDNNWINAPI cdnnGetConvolution2dForwardOutputDim( const cdnnConvolutionDescriptor_t convDesc,
+                                                              const cdnnTensorDescriptor_t     inputTensorDesc,
                                                                 const cdnnFilterDescriptor_t     filterDesc,
                                                                 int *n,
                                                                 int *c,
@@ -339,11 +322,7 @@ cdnnStatus_t CDNNWINAPI cdnnGetConvolutionNdForwardOutputDim( const cdnnConvolut
                                                             );
 
 /* Destroy an instance of convolution descriptor */
-cdnnStatus_t CDNNWINAPI cdnnDestroyConvolutionDescriptor( cdnnConvolutionDescriptor_t convDesc )
-{
-
-
-}
+cdnnStatus_t CDNNWINAPI cdnnDestroyConvolutionDescriptor( cdnnConvolutionDescriptor_t convDesc );
 
 
 /* helper function to provide the convolution algo that fit best the requirement */

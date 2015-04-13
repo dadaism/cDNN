@@ -18,7 +18,7 @@ activation.o: cdnn_activation.c
 	${CC} -fPIC -c -Wall cdnn.c -o cdnn.o
 
 cdnn.so: cdnn.o tensor.o convolution.o pooling.o activation.o
-	${CC} --shared -fPIC -W1,-soname,libcdnn.so -o libcdnn.so cdnn.o -lc
+	${CC} --shared -fPIC -Wl,-soname,libcdnn.so -o libcdnn.so cdnn.o -lc
 
 clean:
 	rm *.o
