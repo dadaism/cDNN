@@ -1,30 +1,30 @@
 #ifndef __CDNN_CORE_H__
 #define __CDNN_CORE_H__
 
-struct cudnnContext {
+struct cdnnContext {
 	
 
 
 
 };
 
-struct cudnnTensorStruct {
+struct cdnnTensorStruct {
 	/* data */
 
 };
 
-struct cudnnConvolutionStruct {
+struct cdnnConvolutionStruct {
 	/* data */
 
 };
 
 
-struct cudnnPoolingStruct {
+struct cdnnPoolingStruct {
 	/* data */
 
 };
 
-struct cudnnFilterStruct {
+struct cdnnFilterStruct {
 	/* data */
 
 };
