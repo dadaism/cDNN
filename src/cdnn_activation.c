@@ -19,7 +19,7 @@
  *     CDNN_SOFTMAX_MODE_CHANNEL = 1     compute the softmax over all C for each H, W, N 
  *
  * f(x) = exp(x) / sum( exp(Xi) ) 
- * f'(x) = 
+ * f'(x) = (1-f(x))*f(x)
  */
 
 /** 
@@ -94,8 +94,8 @@ cdnnStatus_t CDNNWINAPI cdnnSoftmaxBackward(  cdnnHandle_t                    ha
  *    CUDNN_ACTIVATION_TANH    = 2
  *
  * Sigmoid:
- *    f(x) =
- *    f'(x) = 
+ *    f(x) = 1/(1+exp(-x))
+ *    f'(x) = (1-f(x))*f(x)
  *
  * ReLU:
  *    f(x) =
