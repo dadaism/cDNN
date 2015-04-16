@@ -112,7 +112,7 @@ cdnnStatus_t CDNNWINAPI cdnnGetTensorNdDescriptor(  const cdnnTensorDescriptor_t
  */
 cdnnStatus_t CDNNWINAPI cdnnDestroyTensorDescriptor( cdnnTensorDescriptor_t tensorDesc )
 {
-
+    return CDNN_STATUS_SUCCESS;
 }
 
 
