@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include "cdnn_core.h"
 #include "cdnn.h"
+#include "cdnn_tensor.h"
 
 #ifndef CDNNWINAPI
 #ifdef _WIN32
@@ -17,8 +19,11 @@
  */
 cdnnStatus_t cdnnCreateTensorDescriptor( cdnnTensorDescriptor_t   *tensorDesc )
 {
-
-    return CDNN_STATUS_SUCCESS;
+    *tensorDesc = (cdnnTensorDescriptor_t)malloc(sizeof(cdnnTensorDescriptor_t));
+    if (tensorDesc!=NULL) 
+        return CDNN_STATUS_SUCCESS;
+    else 
+        return CDNN_STATUS_ALLOC_FAILED;
 }
 
 /**
@@ -33,8 +38,20 @@ cdnnStatus_t CDNNWINAPI cdnnSetTensor4dDescriptor(   cdnnTensorDescriptor_t   te
                                                      int w         // width of input section
                                                   )
 {
+    /* Currently not supported */
+    assert( format==CDNN_TENSOR_NHWC );
 
-
+    tensorDesc->nDimension = 4;
+    tensorDesc->format     = format;
+    tensorDesc->dataType   = dataType;
+    tensorDesc->dimA       = (int *)malloc(sizeof(int)*4);
+    tensorDesc->strideA    = (int *)malloc(sizeof(int)*4);
+    if ( tensorDesc->dimA==NULL || tensorDesc->strideA==NULL )
+        return CDNN_STATUS_ALLOC_FAILED;
+    tensorDesc->dimA[0] = w; tensorDesc->strideA[0] = 1;
+    tensorDesc->dimA[1] = h; tensorDesc->strideA[1] = w;
+    tensorDesc->dimA[2] = c; tensorDesc->strideA[2] = h * tensorDesc->strideA[1];
+    tensorDesc->dimA[3] = n; tensorDesc->strideA[3] = c * tensorDesc->strideA[2];
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -53,7 +70,17 @@ cdnnStatus_t CDNNWINAPI cdnnSetTensor4dDescriptorEx( cdnnTensorDescriptor_t tens
                                                      int wStride
                                                    )
 {
+    /* Currently, padding is not supported */
+    tensorDesc->nDimension = 4;
 
+    tensorDesc->dimA       = (int *)malloc(sizeof(int)*4);
+    tensorDesc->strideA    = (int *)malloc(sizeof(int)*4);
+    if ( tensorDesc->dimA==NULL || tensorDesc->strideA==NULL )
+        return CDNN_STATUS_ALLOC_FAILED;
+    tensorDesc->dimA[0] = w; tensorDesc->strideA[0] = wStride;
+    tensorDesc->dimA[1] = h; tensorDesc->strideA[1] = hStride;
+    tensorDesc->dimA[2] = c; tensorDesc->strideA[2] = cStride;
+    tensorDesc->dimA[3] = n; tensorDesc->strideA[3] = nStride;
 
     return CDNN_STATUS_SUCCESS;
 }
@@ -73,6 +100,15 @@ cdnnStatus_t CDNNWINAPI cdnnGetTensor4dDescriptor(   const cdnnTensorDescriptor_
                                                      int *wStride
                                                  )
 {
+    *dataType = tensorDesc->dataType;          
+    *n = tensorDesc->dimA[3];      
+    *c = tensorDesc->dimA[2];     
+    *h = tensorDesc->dimA[1];      
+    *w = tensorDesc->dimA[0];
+    *nStride = tensorDesc->strideA[3];
+    *cStride = tensorDesc->strideA[2];
+    *hStride = tensorDesc->strideA[1];
+    *wStride = tensorDesc->strideA[0];
 
     return CDNN_STATUS_SUCCESS;
 
@@ -88,7 +124,11 @@ cdnnStatus_t CDNNWINAPI cdnnSetTensorNdDescriptor(  cdnnTensorDescriptor_t tenso
                                                     const int strideA[]
                                                  )
 {
-
+    tensorDesc->dataType = dataType; 
+    for (int i=0; i<nbDims; ++i) {
+        tensorDesc->dimA[i] = dimA[i];
+        tensorDesc->strideA[i] = strideA[i];   
+    }
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -96,14 +136,18 @@ cdnnStatus_t CDNNWINAPI cdnnSetTensorNdDescriptor(  cdnnTensorDescriptor_t tenso
  * Get a ND tensor descriptor.
  */
 cdnnStatus_t CDNNWINAPI cdnnGetTensorNdDescriptor(  const cdnnTensorDescriptor_t tensorDesc,
-                                                        int nbDimsRequested,
-                                                        cdnnDataType_t *dataType,
-                                                        int *nbDims,
-                                                        int dimA[],
-                                                        int strideA[]
-                                                    )
+                                                    int nbDimsRequested,
+                                                    cdnnDataType_t *dataType,
+                                                    int *nbDims,
+                                                    int dimA[],
+                                                    int strideA[]
+                                                 )
 {
-
+    *dataType = tensorDesc->dataType;
+    for (int i=0; i<*nbDims; ++i) {
+        dimA[i] = tensorDesc->dimA[i];
+        strideA[i] = tensorDesc->strideA[i];   
+    }
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -112,6 +156,9 @@ cdnnStatus_t CDNNWINAPI cdnnGetTensorNdDescriptor(  const cdnnTensorDescriptor_t
  */
 cdnnStatus_t CDNNWINAPI cdnnDestroyTensorDescriptor( cdnnTensorDescriptor_t tensorDesc )
 {
+    free(tensorDesc->dimA);
+    free(tensorDesc->strideA);
+    free(tensorDesc);
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -121,7 +168,7 @@ cdnnStatus_t CDNNWINAPI cdnnDestroyTensorDescriptor( cdnnTensorDescriptor_t tens
  * Descriptors need to have the same dimemsions but not necessarily the
  * same strides.
  */
-cdnnStatus_t CDNNWINAPI cdnnTransformTensor( cdnnHandle_t                         handle,
+cdnnStatus_t CDNNWINAPI cdnnTransformTensor( cdnnHandle_t                    handle,
                                              const void                      *alpha,
                                              const cdnnTensorDescriptor_t    srcDesc,
                                              const void                      *srcData,
@@ -130,7 +177,27 @@ cdnnStatus_t CDNNWINAPI cdnnTransformTensor( cdnnHandle_t                       
                                              void                            *destData
                                            )
 {
-
+    assert( !isSameSize(srcDesc, destDesc) );
+    int nDim = srcDesc->nDimension;
+    long size = srcDesc->strideA[nDim-1] * srcDesc->dimA[nDim-1] ;
+    if ( srcDesc->dataType==CDNN_DATA_FLOAT ) {
+        float a = *((float*)alpha); 
+        float b = *((float*)beta);
+        float *dData = (float*)destData;
+        float *sData = (float*)srcData;
+        for (long i=0; i<size; ++i) {
+            dData[i] = a * sData[i] + b * dData[i];
+        }
+    }
+    else {  // CDNN_DATA_DOUBLE
+        double a = *((double*)alpha);
+        double b = *((double*)beta);
+        double *dData = (double*)destData;
+        double *sData = (double*)srcData;
+        for (long i=0; i<size; ++i) {
+            dData[i] = a * sData[i] + b * dData[i];
+        }
+    }
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -158,7 +225,19 @@ cdnnStatus_t CDNNWINAPI cdnnAddTensor(   cdnnHandle_t                    handle,
                                          void                            *srcDestData
                                      )
 {
+    /* Not Implemented */
+    switch (mode) {
+      case CDNN_ADD_IMAGE:  //      same as CDNN_ADD_SAME_HW: 
 
+      case CDNN_ADD_FEATURE_MAP:  // same as CDNN_ADD_SAME_CHW:
+
+      case CDNN_ADD_SAME_C:
+
+      case CDNN_ADD_FULL_TENSOR:
+
+      default:
+         break;
+    }
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -169,7 +248,22 @@ cdnnStatus_t CDNNWINAPI cdnnSetTensor(  cdnnHandle_t                   handle,
                                         const void                     *value
                                       )
 {
-
+    if ( srcDestDesc->dataType==CDNN_DATA_FLOAT ) {
+        float v = *(float*)value;
+        float *data = (float*)srcDestData;
+        long size = srcDestDesc->size;
+        for (long i=0; i<size; ++i) {
+            data[i] = v;
+        }
+    }
+    else {
+        double v = *(double*)value;
+        double *data = (double*)srcDestData;
+        long size = srcDestDesc->size;
+        for (long i=0; i<size; ++i) {
+            data[i] = v;
+        }
+    }
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -180,7 +274,45 @@ cdnnStatus_t CDNNWINAPI cdnnScaleTensor(  cdnnHandle_t                    handle
                                           const void                      *alpha
                                        )
 {
-
+    if ( srcDestDesc->dataType==CDNN_DATA_FLOAT ) {
+        float a = *(float*)alpha;
+        float *data = (float*)srcDestData;
+        long size = srcDestDesc->size;
+        for (long i=0; i<size; ++i) {
+            data[i] = a * data[i];
+        }
+    }
+    else {
+        double a = *(double*)alpha;
+        double *data = (double*)srcDestData;
+        long size = srcDestDesc->size;
+        for (long i=0; i<size; ++i) {
+            data[i] = a * data[i];
+        }
+    }
     return CDNN_STATUS_SUCCESS;
+}
+
+bool CDNNWINAPI isContiguous( const cdnnTensorDescriptor_t tensorDesc)
+{
+    long stride = 1;
+    for (int i=0; i<tensorDesc->nDimension; ++i) {
+        if ( stride != tensorDesc->strideA[i] )  return false;
+        stride = stride * tensorDesc->dimA[i];
+    }
+    return true;
+}
+
+bool CDNNWINAPI isSameSize( const cdnnTensorDescriptor_t srcDesc, 
+                            const cdnnTensorDescriptor_t destDesc
+                          )
+{
+    if ( srcDesc->nDimension!=destDesc->nDimension )
+        return false;
+    int nDim = srcDesc->nDimension;
+    for (int i=0; i<nDim; ++i) {
+        if ( srcDesc->dimA[i] != destDesc->dimA[i] )  return false;
+    }
+    return true;
 }
 

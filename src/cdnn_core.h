@@ -15,6 +15,8 @@ struct cdnnTensorStruct {
     cdnnDataType_t dataType;     // image data type
     long size;
     int nDimension;
+    int *dimA;
+    int *strideA;
 };
 
 struct cdnnConvolutionStruct {
