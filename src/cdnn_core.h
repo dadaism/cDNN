@@ -22,12 +22,10 @@ struct cdnnTensorStruct {
 struct cdnnConvolutionStruct {
 	/* data */
     cdnnConvolutionMode_t mode;
-    int padHeight;
-    int padWidth;
-    int strideVertical;
-    int strideHorizontal;
-    int upscaleX;
-    int upscaleY;
+    int arrayLength;       /* nbDims-2 size */ 
+    int *padA;
+    int *filterStrideA;
+    int *upscaleA;
 };
 
 
@@ -40,13 +38,18 @@ struct cdnnPoolingStruct {
     int *strideA;
 };
 
+/* e.g. 
+   4D filter
+    filterDimA[3]: number of output feature maps
+    filterDimA[2]: number of input feature maps
+    filterDimA[1]: height of each input filter
+    filterDimA[0]: width of  each input fitler
+*/
 struct cdnnFilterStruct {
 	/* data */
     cdnnDataType_t dataType;  // image data type
-    int outputs;              // number of output feature maps
-    int inputs;               // number of input feature maps
-    int filter_height;        // height of each input filter
-    int filter_width;         // width of  each input fitler
+    int nDimension;           // dimension
+    int *filterDimA;         // filter Dims
 };
 
 #endif

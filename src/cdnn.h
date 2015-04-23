@@ -318,7 +318,7 @@ cdnnStatus_t CDNNWINAPI cdnnGetConvolutionNdForwardOutputDim( const cdnnConvolut
                                                               const cdnnTensorDescriptor_t inputTensorDesc,
                                                               const cdnnFilterDescriptor_t filterDesc,
                                                               int nbDims,
-                                                              int tensorOuputDimA[]
+                                                              int tensorOutputDimA[]
                                                             );
 
 /* Destroy an instance of convolution descriptor */

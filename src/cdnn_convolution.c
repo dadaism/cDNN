@@ -27,8 +27,11 @@
  */
 cdnnStatus_t CDNNWINAPI cdnnCreateFilterDescriptor( cdnnFilterDescriptor_t *filterDesc )
 {
-
-    return CDNN_STATUS_SUCCESS;
+    *filterDesc = (cdnnFilterDescriptor_t)malloc(sizeof(struct cdnnFilterStruct));
+    if (filterDesc!=NULL)
+        return CDNN_STATUS_SUCCESS;
+    else
+        return CDNN_STATUS_ALLOC_FAILED;
 }
 
 /** 
@@ -49,7 +52,14 @@ cdnnStatus_t CDNNWINAPI cdnnSetFilter4dDescriptor(  cdnnFilterDescriptor_t filte
                                                     int w         // width of  each input fitler
                                                   )
 {
-
+    filterDesc->dataType = dataType;
+    filterDesc->filterDimA = (int *)malloc(sizeof(int)*4);
+    if (filterDesc->filterDimA==NULL)
+        return CDNN_STATUS_ALLOC_FAILED;
+    filterDesc->filterDimA[0] = w;
+    filterDesc->filterDimA[1] = h;
+    filterDesc->filterDimA[2] = c;
+    filterDesc->filterDimA[3] = k;
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -72,7 +82,11 @@ cdnnStatus_t CDNNWINAPI cdnnGetFilter4dDescriptor(  const cdnnFilterDescriptor_t
                                                   )
 {
 
-
+    *dataType = filterDesc->dataType;
+    *w = filterDesc->filterDimA[0];
+    *h = filterDesc->filterDimA[1];
+    *c = filterDesc->filterDimA[2];
+    *k = filterDesc->filterDimA[3];
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -90,25 +104,38 @@ cdnnStatus_t CDNNWINAPI cdnnSetFilterNdDescriptor(  cdnnFilterDescriptor_t filte
                                                     const int filterDimA[]
                                                  )
 {
-
+    filterDesc->dataType = dataType;
+    filterDesc->filterDimA = (int *)malloc(sizeof(int)*nbDims);
+    if (filterDesc->filterDimA==NULL)
+        return CDNN_STATUS_ALLOC_FAILED;
+    filterDesc->nDimension = nbDims;
+    for (int i=0; i<nbDims; ++i) {
+        filterDesc->filterDimA[i] = filterDimA[i];
+    }
     return CDNN_STATUS_SUCCESS;
 }
 
 /** 
  * Get an instance of ND Filter
  * @param filterDesc
+ * @param nbDimsRequested Dimension of the expected filter descriptor
  * @param dataType 
  * @param *nbDims dimension of the filter
  * @param filterDimA filter dimension array
  * @return cdnnStatus_t
  */
 cdnnStatus_t CDNNWINAPI cdnnGetFilterNdDescriptor(  const cdnnFilterDescriptor_t filterDesc,
-                                                     int nbDimsRequested,
-                                                     cdnnDataType_t *dataType, // image data type
-                                                     int *nbDims,
-                                                     int filterDimA[]
+                                                    int nbDimsRequested,
+                                                    cdnnDataType_t *dataType, // image data type
+                                                    int *nbDims,
+                                                    int filterDimA[]
                                                   )
 {
+    *dataType = filterDesc->dataType;
+    *nbDims = filterDesc->nDimension;
+    for (int i=0; i<nbDimsRequested; ++i) {
+        filterDimA[i] = filterDesc->filterDimA[i];
+    }
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -119,6 +146,8 @@ cdnnStatus_t CDNNWINAPI cdnnGetFilterNdDescriptor(  const cdnnFilterDescriptor_t
  */
 cdnnStatus_t CDNNWINAPI cdnnDestroyFilterDescriptor( cdnnFilterDescriptor_t filterDesc )
 {
+    free(filterDesc->filterDimA);
+    free(filterDesc);
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -127,8 +156,11 @@ cdnnStatus_t CDNNWINAPI cdnnDestroyFilterDescriptor( cdnnFilterDescriptor_t filt
  */
 cdnnStatus_t CDNNWINAPI cdnnCreateConvolutionDescriptor( cdnnConvolutionDescriptor_t *convDesc )
 {
-
-    return CDNN_STATUS_SUCCESS;
+    *convDesc = (cdnnConvolutionDescriptor_t)malloc(sizeof(struct cdnnConvolutionStruct));
+    if (convDesc!=NULL)
+        return CDNN_STATUS_SUCCESS;
+    else
+        return CDNN_STATUS_ALLOC_FAILED;
 }
 
 /** 
@@ -155,6 +187,19 @@ cdnnStatus_t CDNNWINAPI cdnnSetConvolution2dDescriptor(  cdnnConvolutionDescript
                                                          cdnnConvolutionMode_t mode
                                                       )
 {
+    convDesc->mode = mode;
+    convDesc->arrayLength = 2;
+    convDesc->padA = (int *)malloc(sizeof(int)*2);
+    convDesc->filterStrideA = (int *)malloc(sizeof(int)*2);
+    convDesc->upscaleA = (int *)malloc(sizeof(int)*2);
+    if ( convDesc->padA==NULL || convDesc->filterStrideA==NULL || convDesc->upscaleA==NULL)
+        return CDNN_STATUS_ALLOC_FAILED;
+    convDesc->padA[0] = pad_w;
+    convDesc->padA[1] = pad_h; 
+    convDesc->filterStrideA[0] = v;
+    convDesc->filterStrideA[1] = u;
+    convDesc->upscaleA[0] = upscaley;
+    convDesc->upscaleA[1] = upscalex;
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -182,6 +227,13 @@ cdnnStatus_t CDNNWINAPI cdnnGetConvolution2dDescriptor(  const cdnnConvolutionDe
                                                          cdnnConvolutionMode_t* mode
                                                        )
 {
+    *mode = convDesc->mode;
+    *pad_w = convDesc->padA[0];
+    *pad_h = convDesc->padA[1]; 
+    *v = convDesc->filterStrideA[0];
+    *u = convDesc->filterStrideA[1];
+    *upscaley = convDesc->upscaleA[0];
+    *upscalex = convDesc->upscaleA[1];
 
     return CDNN_STATUS_SUCCESS;
 }
@@ -201,7 +253,11 @@ cdnnStatus_t CDNNWINAPI cdnnGetConvolution2dForwardOutputDim( const cdnnConvolut
                                                               int *w
                                                             )
 {
-
+    *n = inputTensorDesc->dimA[3];
+    *c = inputTensorDesc->dimA[2];
+    /* dim = floor(pad + dataWidth - filterWidth)/stride + 1 */
+    *h = (convDesc->padA[1]+inputTensorDesc->dimA[1]-filterDesc->filterDimA[1])/convDesc->filterStrideA[1];
+    *w = (convDesc->padA[0]+inputTensorDesc->dimA[0]-filterDesc->filterDimA[0])/convDesc->filterStrideA[0];
     return CDNN_STATUS_SUCCESS;
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
@@ -226,7 +282,18 @@ cdnnStatus_t CDNNWINAPI cdnnSetConvolutionNdDescriptor( cdnnConvolutionDescripto
                                                         cdnnConvolutionMode_t mode
                                                       )
 {
-
+    convDesc->mode = mode;
+    convDesc->arrayLength = arrayLength;
+    convDesc->padA = (int *)malloc(sizeof(int)*arrayLength);
+    convDesc->filterStrideA = (int *)malloc(sizeof(int)*arrayLength);
+    convDesc->upscaleA = (int *)malloc(sizeof(int)*arrayLength);
+    if ( convDesc->padA==NULL || convDesc->filterStrideA==NULL || convDesc->upscaleA==NULL)
+        return CDNN_STATUS_ALLOC_FAILED;
+    for (int i=0; i<arrayLength; ++i) {
+        convDesc->padA[i]          = padA[i];
+        convDesc->filterStrideA[i] = filterStrideA[i];
+        convDesc->upscaleA[i]      = upscaleA[i];
+    }
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -253,10 +320,15 @@ cdnnStatus_t CDNNWINAPI cdnnGetConvolutionNdDescriptor( const cdnnConvolutionDes
                                                         cdnnConvolutionMode_t *mode
                                                       )
 {
-
+    *mode = convDesc->mode;
+    *arrayLength = convDesc->arrayLength;
+    for (int i=0; i<arrayLengthRequested; ++i) {
+        padA[i]     = convDesc->padA[i];
+        strideA[i]  = convDesc->filterStrideA[i];
+        upscaleA[i] = convDesc->upscaleA[i];
+    }
     return CDNN_STATUS_SUCCESS;
 }
-
 
 /**
  * Helper function to return the dimensions of the output tensor given a convolution descriptor 
@@ -265,11 +337,15 @@ cdnnStatus_t CDNNWINAPI cdnnGetConvolutionNdForwardOutputDim( const cdnnConvolut
                                                               const cdnnTensorDescriptor_t inputTensorDesc,
                                                               const cdnnFilterDescriptor_t filterDesc,
                                                               int nbDims,
-                                                              int tensorOuputDimA[]
+                                                              int tensorOutputDimA[]
                                                             )
 {
-
-
+    tensorOutputDimA[nbDims] = inputTensorDesc->dimA[nbDims];
+    tensorOutputDimA[nbDims-1] = inputTensorDesc->dimA[nbDims-1];
+    /* dim = floor(pad + dataWidth - filterWidth)/stride + 1 */
+    for (int i=nbDims-2; i>=0; --i) {
+        tensorOutputDimA[i] = (convDesc->padA[i]+inputTensorDesc->dimA[i]-filterDesc->filterDimA[i])/convDesc->filterStrideA[i];
+    }
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -278,7 +354,9 @@ cdnnStatus_t CDNNWINAPI cdnnGetConvolutionNdForwardOutputDim( const cdnnConvolut
  */
 cdnnStatus_t CDNNWINAPI cdnnDestroyConvolutionDescriptor( cdnnConvolutionDescriptor_t convDesc )
 {
-
+    free(convDesc->padA);
+    free(convDesc->filterStrideA);
+    free(convDesc->upscaleA);
     return CDNN_STATUS_SUCCESS;
 }
 
