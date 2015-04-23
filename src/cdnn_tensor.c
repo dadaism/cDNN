@@ -4,7 +4,7 @@
 
 #include "cdnn_core.h"
 #include "cdnn.h"
-#include "cdnn_tensor.h"
+#include "cdnn_util.h"
 
 #ifndef CDNNWINAPI
 #ifdef _WIN32
@@ -19,7 +19,7 @@
  */
 cdnnStatus_t cdnnCreateTensorDescriptor( cdnnTensorDescriptor_t   *tensorDesc )
 {
-    *tensorDesc = (cdnnTensorDescriptor_t)malloc(sizeof(cdnnTensorDescriptor_t));
+    *tensorDesc = (cdnnTensorDescriptor_t)malloc(sizeof(struct cdnnTensorStruct));
     if (tensorDesc!=NULL) 
         return CDNN_STATUS_SUCCESS;
     else 
@@ -39,7 +39,7 @@ cdnnStatus_t CDNNWINAPI cdnnSetTensor4dDescriptor(   cdnnTensorDescriptor_t   te
                                                   )
 {
     /* Currently not supported */
-    assert( format==CDNN_TENSOR_NHWC );
+    assert( format==CDNN_TENSOR_NCHW );
 
     tensorDesc->nDimension = 4;
     tensorDesc->format     = format;
@@ -52,6 +52,7 @@ cdnnStatus_t CDNNWINAPI cdnnSetTensor4dDescriptor(   cdnnTensorDescriptor_t   te
     tensorDesc->dimA[1] = h; tensorDesc->strideA[1] = w;
     tensorDesc->dimA[2] = c; tensorDesc->strideA[2] = h * tensorDesc->strideA[1];
     tensorDesc->dimA[3] = n; tensorDesc->strideA[3] = c * tensorDesc->strideA[2];
+    tensorDesc->size = n * c * h * w;
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -124,7 +125,8 @@ cdnnStatus_t CDNNWINAPI cdnnSetTensorNdDescriptor(  cdnnTensorDescriptor_t tenso
                                                     const int strideA[]
                                                  )
 {
-    tensorDesc->dataType = dataType; 
+    tensorDesc->dataType = dataType;
+    tensorDesc->nDimension = nbDims;
     for (int i=0; i<nbDims; ++i) {
         tensorDesc->dimA[i] = dimA[i];
         tensorDesc->strideA[i] = strideA[i];   
@@ -162,7 +164,6 @@ cdnnStatus_t CDNNWINAPI cdnnDestroyTensorDescriptor( cdnnTensorDescriptor_t tens
     return CDNN_STATUS_SUCCESS;
 }
 
-
 /**
  * Tensor layout conversion helper (dest = alpha * src + beta * dest)
  * Descriptors need to have the same dimemsions but not necessarily the
@@ -177,7 +178,7 @@ cdnnStatus_t CDNNWINAPI cdnnTransformTensor( cdnnHandle_t                    han
                                              void                            *destData
                                            )
 {
-    assert( !isSameSize(srcDesc, destDesc) );
+    assert( isSameSize(srcDesc, destDesc) );
     int nDim = srcDesc->nDimension;
     long size = srcDesc->strideA[nDim-1] * srcDesc->dimA[nDim-1] ;
     if ( srcDesc->dataType==CDNN_DATA_FLOAT ) {
@@ -291,28 +292,5 @@ cdnnStatus_t CDNNWINAPI cdnnScaleTensor(  cdnnHandle_t                    handle
         }
     }
     return CDNN_STATUS_SUCCESS;
-}
-
-bool CDNNWINAPI isContiguous( const cdnnTensorDescriptor_t tensorDesc)
-{
-    long stride = 1;
-    for (int i=0; i<tensorDesc->nDimension; ++i) {
-        if ( stride != tensorDesc->strideA[i] )  return false;
-        stride = stride * tensorDesc->dimA[i];
-    }
-    return true;
-}
-
-bool CDNNWINAPI isSameSize( const cdnnTensorDescriptor_t srcDesc, 
-                            const cdnnTensorDescriptor_t destDesc
-                          )
-{
-    if ( srcDesc->nDimension!=destDesc->nDimension )
-        return false;
-    int nDim = srcDesc->nDimension;
-    for (int i=0; i<nDim; ++i) {
-        if ( srcDesc->dimA[i] != destDesc->dimA[i] )  return false;
-    }
-    return true;
 }
 

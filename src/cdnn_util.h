@@ -23,7 +23,11 @@
 #ifndef __CDNN_TENSOR_H__
 #define __CDNN_TENSOR_H__
 
-bool isContiguous(const cdnnTensorDescriptor_t tensorDesc);
-bool isSameSize(const cdnnTensorDescriptor_t srcDesc, const cdnnTensorDescriptor_t dstDesc);
+bool CDNNWINAPI isContiguous(const cdnnTensorDescriptor_t tensorDesc);
+bool CDNNWINAPI isSameSize(const cdnnTensorDescriptor_t srcDesc, const cdnnTensorDescriptor_t dstDesc);
+
+void* CDNNWINAPI allocTensor(cdnnTensorDescriptor_t tensorDesc);
+void CDNNWINAPI printTensorDesc(cdnnTensorDescriptor_t tensorDesc);
+void CDNNWINAPI printTensor(cdnnTensorDescriptor_t tensorDesc, void *dataArray);
 
 #endif

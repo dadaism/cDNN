@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "cdnn_core.h"
 #include "cdnn.h"
@@ -11,6 +12,25 @@
 #define CDNNWINAPI
 #endif
 #endif
+
+// Note: tanh is available in math.h
+
+inline float sigmoidFast(float x)
+{
+    return x/(1+abs(x));
+}
+
+
+inline float sigmoid(float x)
+{
+    return 1/(1+exp(-x));
+}
+
+
+inline float ReLU(float x)
+{
+    return x>0? x : 0;
+}
 
 /**
  * Softmax functions: All of the form "output = alpha * Op(inputs) + beta * output" 
@@ -49,7 +69,7 @@ cdnnStatus_t CDNNWINAPI cdnnSoftmaxForward(  cdnnHandle_t                    han
 {
 
 
-
+    return CDNN_STATUS_SUCCESS;
 }
 
 /** 
@@ -81,7 +101,7 @@ cdnnStatus_t CDNNWINAPI cdnnSoftmaxBackward(  cdnnHandle_t                    ha
                                             )
 {
 
-
+    return CDNN_STATUS_SUCCESS;
 }
 
 
@@ -130,8 +150,10 @@ cdnnStatus_t CDNNWINAPI cdnnActivationForward( cdnnHandle_t                    h
                                                void                            *destData
                                               )
 {
+    /* Function Pointer */
 
 
+    return CDNN_STATUS_SUCCESS;
 }
 
 
@@ -162,6 +184,5 @@ cdnnStatus_t CDNNWINAPI cdnnActivationBackward( cdnnHandle_t                    
                                                 void                            *destDiffData
                                               )
 {
-
-	
+    return CDNN_STATUS_SUCCESS;
 }

@@ -22,24 +22,22 @@ struct cdnnTensorStruct {
 struct cdnnConvolutionStruct {
 	/* data */
     cdnnConvolutionMode_t mode;
-    int pad_height;
-    int pad_width;
-    int stride_vertical;
-    int stride_horizontal;
-    int upscale_x;
-    int upscale_y;
+    int padHeight;
+    int padWidth;
+    int strideVertical;
+    int strideHorizontal;
+    int upscaleX;
+    int upscaleY;
 };
 
 
 struct cdnnPoolingStruct {
 	/* data */
     cdnnPoolingMode_t mode;
-    int window_height;
-    int window_width;
-    int pad_vertical;
-    int pad_horizontal;
-    int stride_vertical;
-    int stride_horizontal;
+    int nDimension;
+    int *windowDimA;
+    int *paddingA;
+    int *strideA;
 };
 
 struct cdnnFilterStruct {

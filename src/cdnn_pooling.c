@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include "cdnn_core.h"
 #include "cdnn.h"
@@ -25,7 +26,11 @@
  */
 cdnnStatus_t CDNNWINAPI cdnnCreatePoolingDescriptor( cdnnPoolingDescriptor_t *poolingDesc)
 {
-    return CDNN_STATUS_SUCCESS;
+    *poolingDesc = (cdnnPoolingDescriptor_t)malloc(sizeof(struct cdnnPoolingStruct));
+    if (poolingDesc!=NULL) 
+        return CDNN_STATUS_SUCCESS;
+    else 
+        return CDNN_STATUS_ALLOC_FAILED;
 }
 
 cdnnStatus_t CDNNWINAPI cdnnSetPooling2dDescriptor(  cdnnPoolingDescriptor_t poolingDesc,
@@ -38,19 +43,39 @@ cdnnStatus_t CDNNWINAPI cdnnSetPooling2dDescriptor(  cdnnPoolingDescriptor_t poo
                                                         int horizontalStride
                                                    )
 {
+    poolingDesc->nDimension  = 2;
+    poolingDesc->windowDimA  = (int *)malloc(sizeof(int)*2);
+    poolingDesc->paddingA    = (int *)malloc(sizeof(int)*2);
+    poolingDesc->strideA     = (int *)malloc(sizeof(int)*2);
+    if ( poolingDesc->windowDimA==NULL 
+         || poolingDesc->paddingA==NULL 
+         || poolingDesc->strideA==NULL )
+        return CDNN_STATUS_ALLOC_FAILED;
+    poolingDesc->windowDimA[1]  = windowHeight;
+    poolingDesc->windowDimA[0]  = windowWidth;
+    poolingDesc->paddingA[1]    = verticalPadding;
+    poolingDesc->paddingA[0]    = horizontalPadding;
+    poolingDesc->strideA[1]     = verticalStride;
+    poolingDesc->strideA[0]     = horizontalStride;
     return CDNN_STATUS_SUCCESS;
 }
 
 cdnnStatus_t CDNNWINAPI cdnnGetPooling2dDescriptor(  const cdnnPoolingDescriptor_t poolingDesc,
-                                                        cdnnPoolingMode_t *mode,
-                                                        int *windowHeight,
-                                                        int *windowWidth,
-                                                        int *verticalPadding,
-                                                        int *horizontalPadding,
-                                                        int *verticalStride,
-                                                        int *horizontalStride
+                                                     cdnnPoolingMode_t *mode,
+                                                     int *windowHeight,
+                                                     int *windowWidth,
+                                                     int *verticalPadding,
+                                                     int *horizontalPadding,
+                                                     int *verticalStride,
+                                                     int *horizontalStride
                                                    )
 {
+    *windowHeight      = poolingDesc->windowDimA[1];
+    *windowWidth       = poolingDesc->windowDimA[0];
+    *verticalPadding   = poolingDesc->paddingA[1];
+    *horizontalPadding = poolingDesc->paddingA[0];
+    *verticalStride    = poolingDesc->strideA[1];
+    *horizontalStride  = poolingDesc->strideA[0];
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -72,7 +97,20 @@ cdnnStatus_t CDNNWINAPI cdnnSetPoolingNdDescriptor(  cdnnPoolingDescriptor_t poo
                                                      const int strideA[]
                                                    )
 {
+    poolingDesc->nDimension = nbDims;
+    poolingDesc->windowDimA  = (int *)malloc(sizeof(int)*nbDims);
+    poolingDesc->paddingA    = (int *)malloc(sizeof(int)*nbDims);
+    poolingDesc->strideA     = (int *)malloc(sizeof(int)*nbDims);
+    if ( poolingDesc->windowDimA==NULL 
+         || poolingDesc->paddingA==NULL 
+         || poolingDesc->strideA==NULL )
+        return CDNN_STATUS_ALLOC_FAILED;
 
+    for (int i=0; i<nbDims; ++i) {
+        poolingDesc->windowDimA[i] = windowDimA[i];
+        poolingDesc->paddingA[i] = paddingA[i];
+        poolingDesc->strideA[i] = strideA[i];   
+    }
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -88,7 +126,12 @@ cdnnStatus_t CDNNWINAPI cdnnGetPoolingNdDescriptor(  const cdnnPoolingDescriptor
                                                      int strideA[]
                                                   )
 {
-
+    *nbDims = poolingDesc->nDimension;
+    for (int i=0; i<*nbDims; ++i) {
+        windowDimA[i] = poolingDesc->windowDimA[i];
+        paddingA[i]   = poolingDesc->paddingA[i];
+        strideA[i]    = poolingDesc->strideA[i]; 
+    }
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -101,7 +144,12 @@ cdnnStatus_t CDNNWINAPI cdnnGetPoolingNdForwardOutputDim( const cdnnPoolingDescr
                                                           int outputTensorDimA[]
                                                         )
 {
-
+    for (int i=0; i<nbDims; ++i) {
+        outputTensorDimA[i] = (inputTensorDesc->dimA[i]+poolingDesc->paddingA[i]-poolingDesc->windowDimA[i])/poolingDesc->strideA[i] + 1;
+    }
+    for (int i=nbDims; i<inputTensorDesc->nDimension; ++i) {
+        outputTensorDimA[i] = (inputTensorDesc->dimA[i]+poolingDesc->paddingA[i]-poolingDesc->windowDimA[i])/poolingDesc->strideA[i] + 1;
+    }
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -115,7 +163,10 @@ cdnnStatus_t CDNNWINAPI cdnnGetPooling2dForwardOutputDim( const cdnnPoolingDescr
                                                           int *outH,
                                                           int *outW)
 {
-
+    *outW = (inputTensorDesc->dimA[0]+poolingDesc->paddingA[0]-poolingDesc->windowDimA[0])/poolingDesc->strideA[0] + 1; // <- do I need a floor function here ?
+    *outH = (inputTensorDesc->dimA[1]+poolingDesc->paddingA[1]-poolingDesc->windowDimA[1])/poolingDesc->strideA[1] + 1; 
+    *outC = inputTensorDesc->dimA[2];
+    *outN = inputTensorDesc->dimA[3];
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -123,7 +174,10 @@ cdnnStatus_t CDNNWINAPI cdnnGetPooling2dForwardOutputDim( const cdnnPoolingDescr
 /* Destroy an instance of pooling descriptor */
 cdnnStatus_t CDNNWINAPI cdnnDestroyPoolingDescriptor( cdnnPoolingDescriptor_t poolingDesc )
 {
-
+    free(poolingDesc->windowDimA);
+    free(poolingDesc->paddingA);
+    free(poolingDesc->strideA);
+    free(poolingDesc);
     return CDNN_STATUS_SUCCESS;
 }
 
@@ -140,6 +194,10 @@ cdnnStatus_t CDNNWINAPI cdnnPoolingForward(  cdnnHandle_t handle,
                                              void                            *destData
                                           )
 {
+    /* Only support 2D pooling */
+    assert(poolingDesc->nDimension==2);
+
+
 
     return CDNN_STATUS_SUCCESS;
 }
