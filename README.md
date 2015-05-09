@@ -2,4 +2,8 @@
 
 This is cuDNN like APIs library for CNN on CPUs.
 
-Under construction...
+## Supported Functionalities
+Convolution
+Pooling
+
+## Under construction..
